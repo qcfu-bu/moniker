@@ -134,7 +134,7 @@ where
     }
 
     fn close_term(&mut self, state: ScopeState, on_free: &impl OnFreeFn<N>) {
-        self.unsafe_pattern.close_pattern(state, on_free);
+        self.unsafe_pattern.close_pattern(state.incr(), on_free);
         self.unsafe_body.close_term(state.incr(), on_free);
     }
 
