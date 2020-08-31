@@ -139,7 +139,7 @@ where
     }
 
     fn open_term(&mut self, state: ScopeState, on_bound: &impl OnBoundFn<N>) {
-        self.unsafe_pattern.open_pattern(state, on_bound);
+        self.unsafe_pattern.open_pattern(state.incr(), on_bound);
         self.unsafe_body.open_term(state.incr(), on_bound);
     }
 
