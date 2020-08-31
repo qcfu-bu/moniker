@@ -206,4 +206,50 @@ fn test_eval_nested_let_rec() {
 }
 
 
+#[test]
+fn test_eval_nested_let_rec_2() {
+    use moniker::FreeVar;
+
+    let x = FreeVar::fresh_named("x");
+    let k = FreeVar::fresh_named("k");
+    let c = FreeVar::fresh_named("c");
+    let t = FreeVar::fresh_named("t");
+
+    let identity = RcExpr::from(Expr::Lam(Scope::new(
+        Binder(x.clone()),
+        RcExpr::from(Expr::Var(Var::Free(x.clone()))),
+    )));
+
+    // expr =
+    //      let c = let t = id(k)
+    //               in t
+    //          k = id
+    //      in  c
+    let expr = RcExpr::from(Expr::LetRec(Scope::new(
+        Rec::new(vec![
+            (
+                Binder(c.clone()),
+                Embed(RcExpr::from(Expr::LetRec(Scope::new(
+		    Rec::new(vec![
+			(
+			    Binder(t.clone()),
+			    Embed(RcExpr::from(Expr::App(identity.clone(),
+							 RcExpr::from(Expr::Var(Var::Free(k.clone()))))))
+			),
+		    ]),
+		    RcExpr::from(Expr::Var(Var::Free(t.clone())))
+		)))),
+            ),
+	    (
+		Binder(k.clone()),
+		Embed(identity.clone())
+	    )
+        ]),
+        RcExpr::from(Expr::Var(Var::Free(c.clone()))),
+    )));
+
+    assert_term_eq!(eval(&expr), identity.clone());
+}
+
+
 fn main() {}
