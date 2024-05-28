@@ -277,7 +277,7 @@ pub fn match_expr(pattern: &RcPattern, expr: &RcExpr) -> Option<Vec<(FreeVar<Str
                 }
             }
             Some(mappings)
-        }
+        },
         (&Pattern::Tag(ref pattern_label, ref pattern), &Expr::Tag(ref expr_label, ref expr))
             if pattern_label == expr_label =>
         {
@@ -403,7 +403,7 @@ pub fn check_pattern(
 ) -> Result<Context, String> {
     match (&*pattern.inner, &*expected_ty.inner) {
         (&Pattern::Binder(Binder(ref free_var)), _) => {
-            return Ok(Context::singleton(free_var.clone(), expected_ty.clone()));
+            return Ok(Context::unit(free_var.clone(), expected_ty.clone()));
         },
         (&Pattern::Tag(ref label, ref pattern), &Type::Variant(ref variants)) => {
             return match variants.iter().find(|&(l, _)| l == label) {
